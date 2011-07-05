@@ -42,7 +42,7 @@ class ExtreamCache extends Plugin
 	const EXPIRE_STATS = 604800;
 	const STATS_GROUP_NAME = 'extreamcache_stats';
 	const GROUP_NAME = 'extreamcache';
-	const FILE_EXTENSION = 'extream';
+	const FILE_EXTENSION = 'html';
 	const CACHE_PATH = 'user/cache';
 
 	/**
@@ -211,6 +211,10 @@ class ExtreamCache extends Plugin
 			$slug = str_replace($habari, '', $slug);
 			$slug = str_replace(HABARI_PATH, '', $slug);
 			$file = HABARI_PATH.'/'.self::CACHE_PATH.$slug;
+			if ( ! strpos($file, self::FILE_EXTENSION))
+			{
+				$file .= '.'.self::FILE_EXTENSION;
+			}
 			unlink($file);
 		}
 	}
@@ -230,7 +234,7 @@ class ExtreamCache extends Plugin
 			URL::get('atom_feed', 'index=1'),
 			Site::get_url('habari')
 			);
-		$this->cache_invalidate($comment->post->slug.'.'.self::FILE_EXTENSION);
+		$this->cache_invalidate($urls);
 	}
 
 
@@ -249,11 +253,11 @@ class ExtreamCache extends Plugin
 
 	/**
 	 * Setup the initial ignore list on activation. Ignores URLs matching the following:
-	 * /admin, /feedback, /user, /ajax, /auth_ajax, and ?nocache
+	 * /auth, /admin, /feedback, /user, /ajax, /auth_ajax, /cron and ?nocache
 	 */
 	public function action_plugin_activation()
 	{
-		Options::set('extreamcache__ignore_list', '/admin,/feedback,/user,/ajax,/auth_ajax,?nocache,/cron');
+		Options::set('extreamcache__ignore_list', '/auth,/admin,/feedback,/user,/ajax,/auth_ajax,?nocache,/cron');
 	}
 
 
